@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "./server/dist",
+    "baseUrl": "./server",
+    "paths": {
+      "@services/*": ["services/*"],
+      "@routes/*": ["routes/*"]
+    }
+  },
+  "include": ["server/src/**/*"]
+}

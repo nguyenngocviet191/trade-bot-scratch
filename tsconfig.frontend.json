@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "jsx": "react",
+    "moduleResolution": "node",
+    "outDir": "./client/dist",
+    "baseUrl": "./client",
+    "paths": {
+      "@components/*": ["components/*"],
+      "@hooks/*": ["hooks/*"]
+    }
+  },
+  "include": ["client/src/**/*"]
+}

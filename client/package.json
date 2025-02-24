@@ -4,7 +4,16 @@
   "description": "Tradebot microservice",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "repository": {
     "type": "git",
@@ -18,14 +27,36 @@
   },
   "homepage": "https://github.com/nguyenngocviet191/trade-bot-scratch#readme",
   "dependencies": {
+    "@types/axios": "^0.9.36",
     "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.1",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "typescript": "^5.7.3"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
+    "redis": "^4.7.0",
+    "typescript": "^4.9.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "webpack-cli": "^6.0.1"
   }
 }

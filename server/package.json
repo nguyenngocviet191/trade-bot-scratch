@@ -1,0 +1,31 @@
+{
+  "name": "trade-bot-scratch-server",
+  "version": "1.0.0",
+  "description": "Backend for Tradebot",
+  "main": "src/api_gateway.ts",
+  "scripts": {
+    "start": "ts-node src/api_gateway.ts",
+    "build": "tsc",
+    "dev": "nodemon --exec ts-node src/api_gateway.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "redis": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/express": "^4.17.11",
+    "@types/express-session": "^1.17.0",
+    "@types/passport": "^1.0.0",
+    "@types/passport-google-oauth20": "^2.0.0",
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1",
+    "nodemon": "^3.0.0"
+  }
+}
