@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 
@@ -11,15 +10,5 @@ root.render(
   </React.StrictMode>
 );
 
-declare const module: any;
+declare const module: any; // eslint-disable-line no-undef  
 
-if (module.hot) {
-  module.hot.accept('./App', () => {
-    const NextApp = require('./App').default;
-    root.render(
-      <React.StrictMode>
-        <NextApp />
-      </React.StrictMode>
-    );
-  });
-}
