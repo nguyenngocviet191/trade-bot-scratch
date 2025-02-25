@@ -2,6 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "outDir": "./server/dist",
     "baseUrl": "./server",
     "paths": {
@@ -9,5 +10,9 @@
       "@routes/*": ["routes/*"]
     }
   },
-  "include": ["server/src/**/*"]
+  "include": ["server/**/*"],
+  "ts-node": {
+   "esm": true,
+   "experimentalSpecifierResolution": "node"
+},
 }

@@ -1,0 +1,13 @@
+{
+    "name": "trade-bot-scratch",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "concurrently \"npm run server\" \"npm run client\"",
+        "server": "nodemon --ext ts --exec tsx server/server.ts",
+        "client": "npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.0",
+        "nodemon": "^3.0.1"
+    }
+}

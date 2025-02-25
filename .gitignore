@@ -1,7 +1,7 @@
 # Node.js
 node_modules/
-client/node_modules/
-server/node_modules/
+# exclude all node_modules folders
+**/node_modules 
 npm-debug.log
 yarn-error.log
 .venv/
