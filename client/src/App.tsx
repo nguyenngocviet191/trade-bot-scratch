@@ -6,6 +6,8 @@ import Market from "./pages/Market";
 import Backtest from "./pages/Backtest";
 import Report from "./pages/Report";
 import Setting from "./pages/Setting";
+import "./index.css";
+ 
 const App: React.FC = () => {
   return (
     <div className="App flex">
@@ -19,7 +21,12 @@ const App: React.FC = () => {
           <Route path="/setting">{() => <Setting />}</Route>
         </Switch>
       </div>
+      <h2 className="flex-1 p-4">
+        Hello world!
+      </h2>
+  
     </div>
+
   );
 };
 

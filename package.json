@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "scripts": {
         "start": "concurrently \"npm run server\" \"npm run client\"",
-        "server": "nodemon --ext ts --exec tsx server/server.ts",
+        "server": "concurrently \"tsx server/server_market.ts\" \"tsx server/api_gateway.ts\"",
         "client": "npm run dev"
     },
     "devDependencies": {

@@ -9,7 +9,8 @@ const Sidebar = () => {
         <Link href="/" className="hover:bg-gray-700 p-2 rounded">🏠 Home</Link>
         <Link href="/market" className="hover:bg-gray-700 p-2 rounded">📈 Market</Link>
         <Link href="/backtest" className="hover:bg-gray-700 p-2 rounded">📊 Backtest</Link>
-        <Link href="/report" className="hover:bg-gray-700 p-2 rounded">⚙️ Setting</Link>
+        <Link href="/report" className="hover:bg-gray-700 p-2 rounded">📑 Report</Link>
+        <Link href="/setting" className="hover:bg-gray-700 p-2 rounded">⚙️ Setting</Link>
       </nav>
     </div>
   );

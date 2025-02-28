@@ -1,16 +1,16 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "./server/dist",
-    "baseUrl": "./server",
+    "outDir": "./dist",
+    "baseUrl": ".",
     "paths": {
       "@services/*": ["services/*"],
       "@routes/*": ["routes/*"]
     }
   },
-  "include": ["server/**/*"],
+  "include": ["**/*"],
   "ts-node": {
    "esm": true,
    "experimentalSpecifierResolution": "node"
