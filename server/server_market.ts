@@ -3,6 +3,8 @@ import cors from 'cors';
 // import apiGateway from './api_gateway'; // Import the api_gateway module
 import { fetchCryptoPrice, fetchCryptoOHLCV } from './services/market';
 
+// Ensure fetchCryptoPrice is correctly imported and handles errors
+
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -19,14 +21,21 @@ app.get('/ticker/:symbol/:base', async (req: Request, res: Response) => {
 
     try {
         const price = await fetchCryptoPrice(symbol, base);
-        res.json({ price });
+        res.json({
+            timestamp: price.timestamp,
+            open: price.open,
+            high: price.high,
+            low: price.low,
+            close: price.close,
+            volume: price.volume
+        });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch price' });
     }
 });
 
 // New route for fetching candlestick data
-app.get('/OHLCV/:symbol/:base/:timeframe', async (req: Request, res: Response) => {
+app.get('/ohlcv/:symbol/:base/:timeframe', async (req: Request, res: Response) => {
     const { symbol, base, timeframe } = req.params;
     const limit = parseInt(req.query.limit as string) || 20;
 
