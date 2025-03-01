@@ -49,7 +49,6 @@ const Market = () => {
   });
 
   useEffect(() => {
-    //
     const fetchPrice = async () => {
       try {
         const [base, quote] = pair.split('/');
@@ -70,38 +69,68 @@ const Market = () => {
           `http://localhost:5001/OHLCV/${base}/${quote}/${timeframe}?limit=${limit}`
         );
 
-        const candlestickData: CandlestickData[] = response.data.map(
-          ([timestamp, open, high, low, close]) => ({
+        if (limit === 1 && chartData.series[0].data.length > 0) {
+          // Update the last bar in the existing chart data
+          const lastCandle = response.data[0];
+          const updatedCandlestickData = [...chartData.series[0].data];
+          const updatedVolumeData = [...chartData.series[1].data];
+          console.log(`num bar: ${updatedCandlestickData.length}`);
+          updatedCandlestickData[updatedCandlestickData.length - 1] = {
+            x: new Date(lastCandle[0]),
+            y: [lastCandle[1], lastCandle[2], lastCandle[3], lastCandle[4]],
+          };
+
+          updatedVolumeData[updatedVolumeData.length - 1] = {
+            x: new Date(lastCandle[0]),
+            y: lastCandle[5],
+          };
+          console.log(`update num bar: ${updatedCandlestickData.length}`);
+        } else {
+          // Load new data
+          const candlestickData: CandlestickData[] = response.data.map(
+            ([timestamp, open, high, low, close]) => ({
+              x: new Date(timestamp),
+              y: [open, high, low, close],
+            })
+          );
+
+          const volumeData: VolumeData[] = response.data.map(([timestamp, , , , , volume]) => ({
             x: new Date(timestamp),
-            y: [open, high, low, close],
-          })
-        );
+            y: volume,
+          }));
 
-        const volumeData: VolumeData[] = response.data.map(([timestamp, , , , , volume]) => ({
-          x: new Date(timestamp),
-          y: volume,
-        }));
+          // ✅ Tính min & max để điều chỉnh trục Y chính
+          const prices = response.data.map(([_, open, high, low, close]) => [open, high, low, close]).flat();
+          const yMin = Math.min(...prices) * 0.98; // ...spread operator để flatten mảng
+          const yMax = Math.max(...prices) * 1.02; // ...spread operator để flatten mảng
+          // ✅ Tính max của Volume và giữ nó trong khoảng 1/5 biểu đồ
+          const volumeMax = Math.max(...response.data.map((d) => d[5])) * 5;
 
-        // ✅ Tính min & max để điều chỉnh trục Y chính
-        const prices = response.data.map(([_, open, high, low, close]) => [open, high, low, close]).flat();
-        const yMin = Math.min(...prices) * 0.98; // ...spread operator để flatten mảng
-        const yMax = Math.max(...prices) * 1.02; // ...spread operator để flatten mảng
-        // ✅ Tính max của Volume và giữ nó trong khoảng 1/5 biểu đồ
-        const volumeMax = Math.max(...response.data.map((d) => d[5])) * 5;
-
-        setChartData({
-          series: [
-            { name: "Candlestick", type: "candlestick", data: candlestickData },
-            { name: "Volume", type: "bar", data: volumeData },
-          ],
-          yMin,
-          yMax,
-          volumeMax,
-        });
+          setChartData((prev)=>({
+            ...prev,
+            series: [
+              { name: "Candlestick", type: "candlestick", data: candlestickData },
+              { name: "Volume", type: "bar", data: volumeData },
+            ],
+            yMin,
+            yMax,
+            volumeMax,
+          }));
+        }
       } catch (err) {
         setError("Failed to fetch candlestick data");
       }
     };
+
+    // setChartData({
+    //   series: [
+    //     { name: "Candlestick", type: "candlestick", data: [] },
+    //     { name: "Volume", type: "bar", data: [] },
+    //   ],
+    //   yMin: 0,
+    //   yMax: 100,
+    //   volumeMax: 1,
+    // });
 
     fetchPrice();
     fetchCandlestickData(120); // Load 120 bars initially
@@ -109,10 +138,13 @@ const Market = () => {
     const intervalId = setInterval(() => {
       fetchPrice();
       fetchCandlestickData(1); // Only update the last bar
-    }, 1000); // Increased interval to 1 second to reduce load
+    }, 1000); // Increased interval to 1 second to reduce lo
+
     // ✅ Clear interval to prevent memory leak ,unmounting component
     return () => clearInterval(intervalId);
   }, [pair, timeframe]);
+
+
 
   return (
     <div className="container mx-auto p-4">
