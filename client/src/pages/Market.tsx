@@ -49,6 +49,7 @@ const Market = () => {
   });
 
   useEffect(() => {
+    //
     const fetchPrice = async () => {
       try {
         const [base, quote] = pair.split('/');
@@ -57,17 +58,16 @@ const Market = () => {
         );
         const { open, high, low, close, volume } = tickerResponse.data;
         setTicker({ open, high, low, close, volume });
-      
       } catch (err) {
         setError("Failed to fetch price");
       }
     };
 
-    const fetchCandlestickData = async () => {
+    const fetchCandlestickData = async (limit: number) => {
       try {
         const [base, quote] = pair.split('/');
         const response = await axios.get<[number, number, number, number, number, number][]>(
-          `http://localhost:5001/OHLCV/${base}/${quote}/${timeframe}?limit=120`
+          `http://localhost:5001/OHLCV/${base}/${quote}/${timeframe}?limit=${limit}`
         );
 
         const candlestickData: CandlestickData[] = response.data.map(
@@ -82,29 +82,13 @@ const Market = () => {
           y: volume,
         }));
 
-        // ✅ Cập nhật cây nến cuối bằng dữ liệu ticker
-        if (candlestickData.length > 0 && ticker) {
-          const lastCandle = candlestickData[candlestickData.length - 1];
-          candlestickData[candlestickData.length - 1] = {
-            x: new Date(lastCandle.x),
-            y: [
-              lastCandle.y[0], // Open giữ nguyên
-              Math.max(lastCandle.y[1], ticker.high), // High cập nhật nếu cần
-              Math.min(lastCandle.y[2], ticker.low), // Low cập nhật nếu cần
-              ticker.close, // Close lấy từ ticker
-            ],
-          };
-          // ✅ Cập nhật Volume của cây nến cuối
-          volumeData[volumeData.length - 1] = { x: new Date(lastCandle.x), y: ticker.volume };
-        }
-      
         // ✅ Tính min & max để điều chỉnh trục Y chính
         const prices = response.data.map(([_, open, high, low, close]) => [open, high, low, close]).flat();
         const yMin = Math.min(...prices) * 0.98; // ...spread operator để flatten mảng
         const yMax = Math.max(...prices) * 1.02; // ...spread operator để flatten mảng
         // ✅ Tính max của Volume và giữ nó trong khoảng 1/5 biểu đồ
         const volumeMax = Math.max(...response.data.map((d) => d[5])) * 5;
-        
+
         setChartData({
           series: [
             { name: "Candlestick", type: "candlestick", data: candlestickData },
@@ -120,14 +104,15 @@ const Market = () => {
     };
 
     fetchPrice();
-    fetchCandlestickData();
+    fetchCandlestickData(120); // Load 120 bars initially
+
     const intervalId = setInterval(() => {
       fetchPrice();
-      fetchCandlestickData();
-    }, 1000); // Increased interval to 1 seconds to reduce load
-
+      fetchCandlestickData(1); // Only update the last bar
+    }, 1000); // Increased interval to 1 second to reduce load
+    // ✅ Clear interval to prevent memory leak ,unmounting component
     return () => clearInterval(intervalId);
-  }, [pair, timeframe, ticker]);
+  }, [pair, timeframe]);
 
   return (
     <div className="container mx-auto p-4">
@@ -169,11 +154,16 @@ const Market = () => {
               </Select>
             </div>
             
-            <div className="w-full md:w-1/3 flex items-end">
+            <div className="w-full md:w-1/3 flex flex-col items-end">
               {error && <div className="text-red-500">{error}</div>}
               {ticker && ticker.close !== null ? (
                 <div className="text-lg font-semibold">
-                  Current {pair} Price: <span className="text-green-500">${ticker.close.toLocaleString()}</span>
+                  <div>Current {pair} Price:</div>
+                  <div>Open: <span className="text-green-500">${ticker.open.toLocaleString()}</span></div>
+                  <div>High: <span className="text-green-500">${ticker.high.toLocaleString()}</span></div>
+                  <div>Low: <span className="text-green-500">${ticker.low.toLocaleString()}</span></div>
+                  <div>Close: <span className="text-green-500">${ticker.close.toLocaleString()}</span></div>
+                  <div>Volume: <span className="text-green-500">${ticker.volume.toLocaleString()}</span></div>
                 </div>
               ) : (
                 <div>Loading price...</div>
