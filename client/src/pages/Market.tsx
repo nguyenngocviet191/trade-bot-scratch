@@ -134,7 +134,8 @@ const Market = () => {
   };
 
   const handleAddPair = (symbol: string, base: string) => {
-    setPairs([...pairs, { symbol, base }]);
+    const newPair = { symbol, base };
+    setPairs((prevPairs) => [...prevPairs, newPair]);
   };
 
   return (

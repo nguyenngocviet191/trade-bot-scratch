@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import {  Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {  Input}  from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+
 interface Currency {
   symbol: string;
   base: string;
@@ -34,7 +35,7 @@ const CurrencyTable: React.FC<CurrencyTableProps> = ({ currencies, onCurrencyCli
     <div>
       <Button onClick={() => setShowPopup(true)} className="mb-4">+</Button>
       <Dialog open={showPopup} onOpenChange={setShowPopup}>
-        <DialogContent>
+        <DialogContent className="bg-white">
           <DialogHeader>
             <DialogTitle>Add New Currency Pair</DialogTitle>
           </DialogHeader>
@@ -42,11 +43,11 @@ const CurrencyTable: React.FC<CurrencyTableProps> = ({ currencies, onCurrencyCli
             placeholder="Symbol/Base (e.g., NEO/USDT)"
             value={newPair}
             onChange={(e) => setNewPair(e.target.value)}
-            className="mb-4"//
+            className="mb-4"
           />
           <div className="flex justify-end">
             <Button onClick={handleAddPair} className="mr-2">Add</Button>
-            <Button variant="destructive" onClick={() => setShowPopup(false)}>Cancel</Button>
+            <Button variant="default" onClick={() => setShowPopup(false)}>Cancel</Button>
           </div>
         </DialogContent>
       </Dialog>
