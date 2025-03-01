@@ -100,8 +100,8 @@ const Market = () => {
       
         // ✅ Tính min & max để điều chỉnh trục Y chính
         const prices = response.data.map(([_, open, high, low, close]) => [open, high, low, close]).flat();
-        const yMin = Math.min(...prices) * 0.98; // Giảm 2% để tránh hiển thị quá sát biên
-        const yMax = Math.max(...prices) * 1.02; // Tăng 2% để tránh hiển thị quá sát biên
+        const yMin = Math.min(...prices) * 0.98; // ...spread operator để flatten mảng
+        const yMax = Math.max(...prices) * 1.02; // ...spread operator để flatten mảng
         // ✅ Tính max của Volume và giữ nó trong khoảng 1/5 biểu đồ
         const volumeMax = Math.max(...response.data.map((d) => d[5])) * 5;
         
