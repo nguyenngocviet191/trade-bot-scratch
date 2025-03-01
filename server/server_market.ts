@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 // import apiGateway from './api_gateway'; // Import the api_gateway module
-import { fetchCryptoPrice, fetchCryptoOHLCV } from './services/market';
+import { fetchCryptoPrice, fetchCryptoOHLCV, fetchCryptoPrices } from './services/market';
 
 // Ensure fetchCryptoPrice is correctly imported and handles errors
 
@@ -44,6 +44,18 @@ app.get('/ohlcv/:symbol/:base/:timeframe', async (req: Request, res: Response) =
         res.json(ohlcvData);
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch candlestick data' });
+    }
+});
+
+// New route for fetching cryptocurrency prices for multiple pairs
+app.post('/tickers', async (req: Request, res: Response) => {
+    const pairs = req.body.pairs; // Expecting an array of { symbol, base } objects
+
+    try {
+        const prices = await fetchCryptoPrices(pairs);
+        res.json(prices);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch prices' });
     }
 });
 

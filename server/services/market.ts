@@ -5,10 +5,26 @@ export async function fetchCryptoPrice(symbol: string, base: string) {
         const exchange = new ccxt.binance();
         const ticker = await exchange.fetchTicker(`${symbol}/${base}`);
         const { timestamp, open, high, low, close, baseVolume: volume } = ticker;
-        console.log(`Giá ${symbol}/${base} hiện tại: timestamp=${timestamp}, open=${open}, high=${high}, low=${low}, close=${close}, volume=${volume}`);
+        // console.log(`Giá ${symbol}/${base} hiện tại: timestamp=${timestamp}, open=${open}, high=${high}, low=${low}, close=${close}, volume=${volume}`);
         return { timestamp, open, high, low, close, volume };
     } catch (error) {
         console.error(`Lỗi khi lấy giá ${symbol}/${base}:`, error);
+        throw error;
+    }
+}
+
+export async function fetchCryptoPrices(pairs: { symbol: string, base: string }[]) {
+    try {
+        const exchange = new ccxt.binance();
+        const results = await Promise.all(pairs.map(async pair => {
+            const ticker = await exchange.fetchTicker(`${pair.symbol}/${pair.base}`);
+            const { timestamp, open, high, low, close, baseVolume: volume } = ticker;
+            console.log(`Giá ${pair.symbol}/${pair.base} hiện tại: timestamp=${timestamp}, open=${open}, high=${high}, low=${low}, close=${close}, volume=${volume}`);
+            return { symbol: pair.symbol, base: pair.base, timestamp, open, high, low, close, volume };
+        }));
+        return results;
+    } catch (error) {
+        console.error(`Lỗi khi lấy giá các cặp tiền:`, error);
         throw error;
     }
 }
@@ -25,7 +41,7 @@ export async function fetchCryptoOHLCV(symbol: string, base: string, timeframe: 
             close: candle[4],
             volume: candle[5]
         }));
-        console.log(`Dữ liệu nến ${symbol}/${base} trong ${timeframe}:`, ohlcv);
+        // console.log(`Dữ liệu nến ${symbol}/${base} trong ${timeframe}:`, ohlcv);
         return ohlcv
         ;
     } catch (error) {
