@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Chart from "react-apexcharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { interval } from "date-fns";
 
 type CandlestickData = {
   x: Date;
@@ -34,6 +35,7 @@ const TIMEFRAMES = [
 ];
 
 const Market = () => {
+
   const [pair, setPair] = useState<string>("BTC/USD");
   const [timeframe, setTimeframe] = useState<string>("1m");
   const [ticker, setTicker] = useState<{ open: number; high: number; low: number; close: number; volume: number } | null>(null);
@@ -47,7 +49,7 @@ const Market = () => {
     yMax: 100,
     volumeMax: 1,
   });
-
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     const fetchPrice = async () => {
       try {
@@ -68,44 +70,46 @@ const Market = () => {
         const response = await axios.get<[number, number, number, number, number, number][]>(
           `http://localhost:5001/OHLCV/${base}/${quote}/${timeframe}?limit=${limit}`
         );
-
-        if (limit === 1 && chartData.series[0].data.length > 0) {
+        var candlestickData: CandlestickData[] 
+        var volumeData: VolumeData[]
+        // if (limit === 1 && chartData.series[0].data.length > 0) {
+        if (false) {  
           // Update the last bar in the existing chart data
           const lastCandle = response.data[0];
-          const updatedCandlestickData = [...chartData.series[0].data];
-          const updatedVolumeData = [...chartData.series[1].data];
-          console.log(`num bar: ${updatedCandlestickData.length}`);
-          updatedCandlestickData[updatedCandlestickData.length - 1] = {
+          candlestickData = [...chartData.series[0].data];
+          volumeData = [...chartData.series[1].data];
+          // console.log(`num bar: ${updatedCandlestickData.length}`);
+          candlestickData[candlestickData.length - 1] = {
             x: new Date(lastCandle[0]),
             y: [lastCandle[1], lastCandle[2], lastCandle[3], lastCandle[4]],
           };
 
-          updatedVolumeData[updatedVolumeData.length - 1] = {
+          volumeData[volumeData.length - 1] = {
             x: new Date(lastCandle[0]),
             y: lastCandle[5],
           };
-          console.log(`update num bar: ${updatedCandlestickData.length}`);
+          // console.log(`update num bar: ${updatedCandlestickData.length}`);
         } else {
           // Load new data
-          const candlestickData: CandlestickData[] = response.data.map(
+          candlestickData = response.data.map(
             ([timestamp, open, high, low, close]) => ({
               x: new Date(timestamp),
               y: [open, high, low, close],
             })
           );
 
-          const volumeData: VolumeData[] = response.data.map(([timestamp, , , , , volume]) => ({
+          volumeData= response.data.map(([timestamp, , , , , volume]) => ({
             x: new Date(timestamp),
             y: volume,
           }));
-
+        }
           // ✅ Tính min & max để điều chỉnh trục Y chính
           const prices = response.data.map(([_, open, high, low, close]) => [open, high, low, close]).flat();
           const yMin = Math.min(...prices) * 0.98; // ...spread operator để flatten mảng
           const yMax = Math.max(...prices) * 1.02; // ...spread operator để flatten mảng
           // ✅ Tính max của Volume và giữ nó trong khoảng 1/5 biểu đồ
           const volumeMax = Math.max(...response.data.map((d) => d[5])) * 5;
-
+          console.log(`num bar: ${candlestickData.length}`);
           setChartData((prev)=>({
             ...prev,
             series: [
@@ -116,7 +120,7 @@ const Market = () => {
             yMax,
             volumeMax,
           }));
-        }
+        
       } catch (err) {
         setError("Failed to fetch candlestick data");
       }
@@ -135,20 +139,33 @@ const Market = () => {
     fetchPrice();
     fetchCandlestickData(120); // Load 120 bars initially
 
-    const intervalId = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       fetchPrice();
-      fetchCandlestickData(1); // Only update the last bar
+      fetchCandlestickData(120); // Only update the last bar
     }, 1000); // Increased interval to 1 second to reduce lo
 
     // ✅ Clear interval to prevent memory leak ,unmounting component
-    return () => clearInterval(intervalId);
+    return () => {
+       console.log("clear interval");
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [pair, timeframe]);
 
-
+  useEffect(() => {
+    const handleScroll = (event: Event) => {
+      // Xử lý sự kiện scroll
+    };
+  
+    window.addEventListener('scroll', handleScroll, { passive: true });
+  
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <Card className="mb-6">
+    <div className="container mx-auto p-4"> 
+      <Card className="mb-6"> 
         <CardHeader>
           <CardTitle className="text-xl">📈 Market</CardTitle>
         </CardHeader>
@@ -256,7 +273,7 @@ const Market = () => {
               }}
               series={chartData.series}
               type="candlestick"
-              height={500}
+              height={  400}
             />
           </div>
         </CardContent>
