@@ -1,0 +1,8 @@
+{
+  "markets": [
+    { "id": "BTC/USDT", "price": 50000, "volume": 1200 },
+    { "id": "ETH/USDT", "price": 3000, "volume": 800 }
+  ]
+}
+
+

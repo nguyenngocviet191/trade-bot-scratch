@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trading-config
+data:
+  DATABASE_URL: "postgresql://prod_user:prod_pass@db-host/trading_db"
+  NODE_ENV: "production"
+  PORT: "4000"

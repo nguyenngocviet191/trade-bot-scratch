@@ -20,7 +20,8 @@ build/
 
 # Environment variables
 .env
-
+config
+setting.yaml
 # IDEs and editors
 .vscode/
 .idea/

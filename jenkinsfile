@@ -1,0 +1,54 @@
+pipeline {
+    agent any  // Chạy trên bất kỳ node nào
+
+    environment {
+        REGISTRY = "docker.io/your-dockerhub"  // Docker Registry
+        IMAGE_NAME = "trading-service"
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/your-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'npm install'  // Cài dependencies
+                sh 'npm run build'  // Build code
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'npm test'  // Chạy Unit Test
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                sh 'docker build -t $REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker login -u your-dockerhub -p your-password'
+                sh 'docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl rollout status deployment/trading-service'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ CI/CD Success!'
+        }
+        failure {
+            echo '❌ Build Failed!'
+        }
+    }
+}
