@@ -4,7 +4,8 @@
     "scripts": {
         "start": "concurrently \"npm run server\" \"npm run client\"",
         "server": "concurrently \"tsx server/server_market.ts\" \"tsx server/api_gateway.ts\"",
-        "client": "npm run dev"
+        "client": "npm run dev",
+        "mock" :"json-server --watch shared/mockdata/db.json --port 5000"
     },
     "devDependencies": {
         "concurrently": "^8.2.0",
