@@ -22,7 +22,7 @@ import KnowledgePage from "@/pages/knowledge/Knowledge-page";
 import QuotePage from "@/pages/knowledge/Quote-page";
 import SankeyPage from "@/pages/Sankey-page";
 import FintechPage from "./pages/fintech/Fintech-page";
-
+import HookSignalPage from "@/pages/fintech/HookSignal-page";
 // import BacktestPage from "@/pages/backtest-page";
 // import SettingsPage from "@/pages/settings-page";
 // import NotFound from "@/pages/not-found";
@@ -60,6 +60,7 @@ function App() {
               <Route path="/fintech" element={<FintechPage />} />
               <Route path="/fintech/market" element={<MarketPage />} />
               <Route path="/fintech/metatrader" element={<MetatraderPage />} />
+              <Route path="/fintech/hooksignal" element={<HookSignalPage />} />
               <Route path="/tradebot/bot_manage" element={<BotMgmtPage />} />
 
               <Route path="/knowledge" element={<KnowledgePage />} />

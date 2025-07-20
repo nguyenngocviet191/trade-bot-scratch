@@ -10,6 +10,7 @@ const knowledge_items = [
   { item_name: "Trading bot", item_des: "", item_page: "/fintech/tradingbot" },
   { item_name: "Valuation", item_des: "", item_page: "/fintech/valuation" },
   { item_name: "Hedgefund", item_des: "", item_page: "/fintech/hedgefund" },
+  { item_name: "Hook Signal", item_des: "", item_page: "/fintech/hooksignal" },
 ]
 export default function FintechPage() {
   const navigate = useNavigate();
