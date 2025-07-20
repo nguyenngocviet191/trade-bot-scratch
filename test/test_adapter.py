@@ -10,5 +10,5 @@ connection = {
     "login": 244358935,
     "password": "Abc13579@",
 }
-exchange = MT5(connection=connection,symbol="BTCUSDm", tf="H1")
-print (exchange.info())
+exchange = MT5(connection=connection, symbol="BTCUSDm", tf="H1")
+print(exchange.info())

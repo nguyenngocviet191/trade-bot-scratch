@@ -1,142 +1,172 @@
 // components/CalHeatmap.tsx
 import React from "react";
 import { useEffect, useRef } from "react";
-import  CalHeatmap  from "cal-heatmap";
+import CalHeatmap from "cal-heatmap";
 import Tooltip from "cal-heatmap/plugins/Tooltip";
 import LegendLite from "cal-heatmap/plugins/LegendLite";
 import CalendarLabel from "cal-heatmap/plugins/CalendarLabel";
 import "cal-heatmap/cal-heatmap.css";
+import dayjs from "dayjs";
+import localeData from "dayjs/plugin/localeData";
+import "dayjs/locale/en"; // hoặc "vi" nếu dùng tiếng Việt
 
-// interface CalHeatmapProps {
-//   data: Record<string, number>; // { timestamp: value }
-// }
+dayjs.extend(localeData);
+dayjs.locale("en"); // hoặc "vi"
 
-// const data_source =[
-//     { date: '2025-01-01', temp_max: 2 },
-//     { date: '2025-01-05', temp_max: 5 },
+type DataItem = {
+    date: string; // format: YYYY-MM-DD
+    temp_max: number;
+  };
+ //  const dataSample: DataItem[] = [
+//     { date: "2025-01-01", temp_max: 18 },
+//     { date: "2025-01-02", temp_max: 21 },
+//     { date: "2025-01-03", temp_max: 19 },
+//     { date: "2025-01-04", temp_max: 23 },
+//     { date: "2025-01-05", temp_max: 25 },
+//     { date: "2025-01-06", temp_max: 22 },
+//     { date: "2025-01-07", temp_max: 17 },
+//   ];
 
-// ]
-// export default function CalHeatmapComponent({ data }: CalHeatmapProps) {
-interface CalHeatmapProps {
-  const calRef = useRef<HTMLDivElement>(null); // Removed unused variable
-}
-  useEffect(() => {
-    const cal = new CalHeatmap();
-    if (!calRef.current) return;
-export default function CalHeatmapComponent({ data }: CalHeatmapProps) {
-  const calRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const cal = new CalHeatmap();
-            y: (d: { temp_max: number }) => d.temp_max,
-    cal.paint(
+type Props = {
+    data: DataItem[];
+  };
+  
+export default function CalHeatmapComponent({ data }: Props) {
+// export default function CalHeatmapComponent() {
+    const cal = useRef<CalHeatmap | null>(null);
+    const heatmapContainer = useRef<HTMLDivElement>(null);
+  
+    useEffect(() => {
+      if (!heatmapContainer.current) return;
+    //   const sourceData = data.map((item) => ({
+    //     // date: new Date(item.date),
+       
+    //     date: item.date,
+    //     value: item.temp_max,
+    //   }));
+    //   console.log("sourceData", sourceData);
+      cal.current = new CalHeatmap();
+  
+      cal.current.paint(
         {
+          itemSelector: heatmapContainer.current,
           data: {
-            source: data,
-            x: 'date',
-            y: d => d['temp_max'],
-            groupY: 'max',
+            source: data, // ensure this file is in /public
+            // source: '../data/data.json',
+            type: 'json',
+            
+            x: "date",
+            y: "temp_max",
+            // y: d => +d['temp_max'],
+            // y: (d: any) => +d["value"],
+            groupY: "sum",
           },
-          date: { start: new Date('2025-01-01') },
+          date: { start: new Date("2025-01-01") },
           range: 12,
+            // data: {
+            //     source: '../data/seattle-weather.json',
+            //     type: 'json',
+            //     x: 'date',
+            //     y: d => +d['temp_max'],
+            //     groupY: 'max', 
+            // },
+            // range: 5, 
+            // date: {start: new Date('2012-01-01')},
+          
           scale: {
             color: {
-              type: 'threshold',
-              range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
+              type: "threshold",
+              range: ["#14432a", "#166b34", "#37a446", "#4dd05a"],
               domain: [10, 20, 30],
             },
           },
           domain: {
-            type: 'month',
+            type: "month",
             gutter: 4,
-            label: { text: 'MMM', textAlign: 'start', position: 'top' },
+            label: { text: "MMM", textAlign: "start", position: "top" },
           },
-          subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-              text: function (date: Date, value: number | null, dayjsDate: any) {
+          subDomain: {
+            type: "ghDay",
+            radius: 2,
+            width: 11,
+            height: 11,
+            gutter: 4,
+          },
         },
         [
           [
             Tooltip,
             {
-              text: function (date, value, dayjsDate) {
-                return (
-                  (value ? value : 'No') +
-                  ' contributions on ' +
-                  dayjsDate.format('dddd, MMMM D, YYYY')
-                );
-              },
+              text: (date: Date, value: number, dayjsDate: dayjs.Dayjs) =>
+                (value ?? "No") +
+                " contributions on " +
+                dayjsDate.format("dddd, MMMM D, YYYY"),
             },
           ],
           [
             LegendLite,
             {
               includeBlank: true,
-              itemSelector: '#ex-ghDay-legend',
+              itemSelector: "#gh-legend",
               radius: 2,
               width: 11,
               height: 11,
               gutter: 4,
             },
-              text: () => {
-                const dayjs = require('dayjs');
-                return dayjs.weekdaysShort().map((d: string, i: number) => (i % 2 === 0 ? '' : d));
-              },
+          ],
           [
             CalendarLabel,
             {
-              width: 30,
-              textAlign: 'start',
-              text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
-              padding: [25, 0, 0, 0],
-            },
+                position: 'left',
+                key: 'left',
+                // text: () => ['Mon', '', '', 'Thu', '', '', 'Sun'],
+                text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+                textAlign: 'start',
+                width: 30,
+                padding: [25, 0, 0, 0],
+              },
           ],
         ]
-    );
+      );
+  
+      return () => cal.current?.destroy();
+    }, []);
+  
     return (
-        <div
-          style={{
-            // background: '#22272d',
-            color: '#adbac7',
-            borderRadius: '3px',
-            padding: '1rem',
-            overflow: 'hidden',
-          }}
-        >
-          <div id="ex-ghDay" className="margin-bottom--md"></div>
-          <a
-            className="button button--sm button--secondary margin-top--sm"
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              cal.previous();
-            }}
-          >
-            ← Previous
-          </a>
-          <a
-            className="button button--sm button--secondary margin-top--sm margin-left--xs"
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              cal.next();
-            }}
-          >
-            Next →
-          </a>
-          <div style={{ float: 'right', fontSize: 12 }}>
-            <span style={{ color: '#768390' }}>Less</span>
-            <div
-              id="ex-ghDay-legend"
-              style={{ display: 'inline-block', margin: '0 4px' }}
-            ></div>
-            <span style={{ color: '#768390', fontSize: 12 }}>More</span>
+    //   '<div className="bg-[#22272d] text-[#adbac7] rounded p-4 overflow-hidden">'
+        <div className="text-[#adbac7] rounded p-4 overflow-hidden">
+        <div ref={heatmapContainer} className="mb-4" />
+  
+        <div className="flex items-center justify-between">
+          <div>
+            <a
+              href="#"
+              className="button button--sm button--secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                cal.current?.previous();
+              }}
+            >
+              ← Previous
+            </a>
+            <a
+              href="#"
+              className="button button--sm button--secondary ml-2"
+              onClick={(e) => {
+                e.preventDefault();
+                cal.current?.next();
+              }}
+            >
+              Next →
+            </a>
+          </div>
+  
+          <div className="flex items-center text-xs">
+            <span className="text-[#768390]">Less</span>
+            <div id="gh-legend" className="mx-2" />
+            <span className="text-[#768390]">More</span>
           </div>
         </div>
-      );
-    // return () => cal.destroy();
-  }, [data]);
-
-//   return <div ref={calRef} className="w-full" />;
-  
-
-}
+      </div>
+    );
+  }

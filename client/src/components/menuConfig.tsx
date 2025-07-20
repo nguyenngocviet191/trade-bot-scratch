@@ -1,42 +1,67 @@
+import { Home,ChartArea , BriefcaseBusiness,ChartPie,User, Settings ,Book } from "lucide-react"
 const menuConfig = [
     {
-        label: "Dashboard",
+        label: "Home",
         path: "/",
-        icon: "dashboard",
+        icon: Home,
       },
     {
-      label: "Market Screening",
-      icon: "market",
-      children: [
-        { label: "Stock", path: "/market/stock" },
-        { label: "Crypto", path: "/market/crypto" },
-        { label: "Onchain", path: "/market/onchain" },
-      ],
-    },
-    {
-      label: "Tradebot",
-      icon: "trade",
-      children: [
-        { label: "Bot manage", path: "/tradebot/overview" },
-        { label: "Bot detail", path: "/tradebot/detail" },
-        { label: "Bot studio", path: "/tradebot/studio" },
-      ],
-    },
+      label: "Fintech",
+      icon: ChartArea,
+      path: "/fintech",
+      // children: [
+      //   { label: "Overview", path: "/fintech" },
+      //   { label: "Market", path: "/fintech/market" },
+      //   { label: "Metatrader", path: "/fintech/metatrader" },
 
+      // ],
+    },
     {
-      label: "Reports",
-      icon: "report",
-      path: "/reports", // không có submenu
+      label: "Business",
+      icon: BriefcaseBusiness,
+      path: "/business",
       children: [
-        { label: "mt5", path: "/reports/mt5" },
+        { label: "Overview", path: "/business" },
+        { label: "Bot manage", path: "/trading/bot_manage" },
+        { label: "Bot detail", path: "/trading/detail" },
+        { label: "Bot studio", path: "/trading/bot_studio" },
         
       ],
     },
     {
-      label: "Settings",
-      icon: "setting",
+      label: "Personal",
+      icon: ChartPie,
+      path : "/personal",
+      // children: [
+      //   { label: "Goal", path: "/personal/goal" },
+      //   { label: "Earning", path: "/personal/earning" },
+      //   { label: "Transact", path: "/personal/transact" },
+      //   { label: "Budget", path: "/personal/budget" },
+      //   { label: "Portfolio", path: "/personal/portolio" },
+      // ],
+    },
+    {
+      label: "Reports",
+      icon: User,
+      path: "/reports", // không có submenu
       children: [
-        { label: "Overview", path: "/settings/overview" },
+        { label: "Metatrader", path: "/reports/metatrader" },
+        { label: "Sankey", path: "/reports/sankey" },
+        { label: "Test", path: "/reports/test" }
+      ],
+    },
+    {
+      label: "Knowledge",
+      icon: Book,
+      path: "/knowledge", // không có submenu
+
+    },
+    {
+      label: "Settings",
+      icon: Settings,
+      path: "/settings",
+      children: [
+        { label: "Overview", path: "/settings" },
         { label: "Accounts", path: "/settings/acounts" },
         
       ],

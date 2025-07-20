@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import menuConfig from "./menuConfig";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function SidebarMenu() {
+import { Home,ChartArea , BriefcaseBusiness,ChartPie,User, Settings } from "lucide-react"
+export default function SidebarMenu({ onClose }: { onClose?: () => void }) {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
 
@@ -15,40 +16,46 @@ export default function SidebarMenu() {
   };
 
   return (
-    <div className="w-64 bg-gray-800 text-white h-screen p-4 space-y-2">
+    <div className="w-40 min-h-screen flex flex-col bg-gray-800 text-white  p-4 space-y-2">
       {menuConfig.map((item, idx) => (
         <div key={idx}>
+     
+        
           {item.children ? (
+
             <>
               <button
                 onClick={() => toggleMenu(item.label)}
-                className="flex justify-between w-full px-3 py-2 hover:bg-gray-700 rounded"
+                className="flex w-full gap-2  items-center hover:bg-gray-700 rounded"
               >
+                <span>{item.icon && <item.icon size={18} />}</span>
                 <span>{item.label}</span>
-                {openMenus[item.label as string] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                <div className= "ml-auto">
+                  {openMenus[item.label as string] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </div>
+                
               </button>
               {openMenus[item.label as string] && (
                 <div className="pl-5 text-sm text-gray-300">
                   {item.children.map((sub, i) => (
-                    <div
-                      key={i}
-                      onClick={() => navigate(sub.path)}
-                      className="cursor-pointer py-1 hover:text-white"
-                    >
-                      {sub.label}
-                    </div>
+                    <ul>
+                       <Link to={sub.path}> {sub.label} </Link>
+                    </ul>
+
                   ))}
                 </div>
               )}
             </>
-          ) : (
-            <div
-              onClick={() => navigate(item.path)}
-              className="cursor-pointer px-3 py-2 hover:bg-gray-700 rounded"
-            >
-              {item.label}
+
+
+          ) :
+          (<Link to={item.path}>
+            <div className="flex flex-row items-center gap-2">
+              <span>{item.icon && <item.icon size={18} />}</span>
+              <span>{item.label}</span>
             </div>
-          )}
+          </Link>)
+          }
         </div>
       ))}
     </div>

@@ -20,6 +20,8 @@ build/
 
 # Environment variables
 .env
+**/.env*
+# Exclude all env files with a dot in the name
 config
 setting.yaml
 # IDEs and editors
@@ -33,3 +35,4 @@ setting.yaml
 # OS files
 .DS_Store
 Thumbs.db
+accounts.json
