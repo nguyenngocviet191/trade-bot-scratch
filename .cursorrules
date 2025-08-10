@@ -1,0 +1,144 @@
+# Cursor Rules - Trade Bot Scratch
+
+## 🎯 Project Overview
+Đây là dự án Trade Bot Scratch - một hệ thống trading bot microservice với kiến trúc đa ngôn ngữ (React + TypeScript, Node.js, Python). Tất cả quyết định kỹ thuật và coding standards được lưu trữ trong memory bank.
+
+## 📚 Memory Bank Integration
+- **Memory Bank Location**: `./memory-bank/`
+- **Coding Standards**: `./memory-bank/development/coding-standards/coding-standards.md`
+- **Architecture Decisions**: `./memory-bank/architecture/technical-decisions/adr/`
+- **Project Overview**: `./memory-bank/project-overview.md`
+
+## 🛠️ Technology Stack
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Backend**: Node.js + Express + TypeScript
+- **Trading Engine**: Python + FastAPI + CCXT
+- **Database**: PostgreSQL + Redis
+- **State Management**: TanStack Query (React Query)
+
+## 📋 Coding Standards Compliance
+
+### Frontend (React + TypeScript)
+- Tuân theo cấu trúc thư mục trong `memory-bank/development/coding-standards/coding-standards.md`
+- Sử dụng PascalCase cho components, camelCase cho variables
+- Implement proper TypeScript types và interfaces
+- Sử dụng React hooks đúng cách với dependency arrays
+- Implement error handling và loading states
+- Follow component structure: props interface, state management, event handlers
+
+### Backend (Node.js + TypeScript)
+- RESTful API design với proper HTTP status codes
+- Implement proper error handling và logging
+- Sử dụng TypeScript interfaces cho request/response
+- Follow project structure: controllers, services, middleware
+- Implement input validation và security measures
+
+### Python (FastAPI)
+- Sử dụng type hints cho tất cả functions
+- Implement proper docstrings
+- Follow dataclass patterns cho data models
+- Implement proper exception handling
+- Sử dụng abstract base classes cho adapters
+
+## 🏗️ Architecture Guidelines
+- Tuân theo microservices architecture (ADR-001)
+- Implement proper separation of concerns
+- Sử dụng dependency injection patterns
+- Follow API gateway pattern cho routing
+- Implement proper data flow giữa services
+
+## 📝 Documentation Requirements
+- Tất cả code changes phải được document trong memory bank
+- Update relevant ADRs khi có architectural changes
+- Create user stories cho new features
+- Update API documentation khi thêm endpoints
+- Maintain coding standards documentation
+
+## 🔧 Development Workflow
+- Tạo feature branches với naming convention: `feature/feature-name`
+- Implement proper commit messages: `type(scope): description`
+- Write tests cho new features (coverage > 80%)
+- Update memory bank với lessons learned
+- Follow code review checklist trong coding standards
+
+## 🎯 Code Quality Standards
+- **Test Coverage**: > 80%
+- **Code Complexity**: < 10 (Cyclomatic)
+- **Code Duplication**: < 5%
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Follow project configuration
+- **Prettier**: Consistent code formatting
+
+## 📊 Project Structure Compliance
+```
+trade-bot-scratch/
+├── client/           # React frontend
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── pages/         # Page components
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── services/      # API services
+│   │   └── types/         # TypeScript definitions
+├── server/           # Node.js backend
+│   ├── src/
+│   │   ├── controllers/   # Route handlers
+│   │   ├── services/      # Business logic
+│   │   └── middleware/    # Custom middleware
+├── core/             # Python trading engine
+│   ├── exchange/          # Exchange adapters
+│   ├── ai/               # AI/ML modules
+│   └── utils/            # Utility functions
+├── memory-bank/      # Project documentation
+└── shared/           # Shared types and data
+```
+
+## 🔍 Code Review Checklist
+Khi review code, đảm bảo:
+- [ ] Tuân theo coding standards trong memory bank
+- [ ] TypeScript types properly defined
+- [ ] Error handling implemented
+- [ ] Tests written và passing
+- [ ] Documentation updated
+- [ ] Performance considerations addressed
+- [ ] Security best practices followed
+
+## 🚀 When Creating New Features
+1. **Check Memory Bank**: Xem existing patterns và decisions
+2. **Create User Story**: Sử dụng template trong `memory-bank/templates/`
+3. **Follow Architecture**: Tuân theo ADRs và system design
+4. **Implement Standards**: Apply coding standards consistently
+5. **Document Changes**: Update memory bank với new information
+6. **Write Tests**: Ensure proper test coverage
+7. **Update Documentation**: Keep API docs và guides current
+
+## 📈 Performance & Security
+- Implement proper caching strategies (Redis)
+- Use connection pooling cho databases
+- Implement rate limiting cho APIs
+- Follow OWASP security guidelines
+- Implement proper authentication/authorization
+- Use environment variables cho sensitive data
+
+## 🔄 Continuous Improvement
+- Contribute to memory bank với lessons learned
+- Suggest improvements to coding standards
+- Update templates và documentation
+- Share best practices với team
+- Participate in retrospectives
+
+## ⚠️ Important Notes
+- **Always check memory bank trước khi implement new features**
+- **Follow existing patterns thay vì tạo new ones**
+- **Update documentation khi có changes**
+- **Maintain consistency across all codebases**
+- **Consider impact on existing architecture**
+
+## 📞 References
+- Memory Bank: `./memory-bank/README.md`
+- Coding Standards: `./memory-bank/development/coding-standards/coding-standards.md`
+- Architecture Decisions: `./memory-bank/architecture/technical-decisions/adr/`
+- Project Overview: `./memory-bank/project-overview.md`
+- Developer Onboarding: `./memory-bank/team/onboarding/developer-onboarding.md`
+
+---
+*Last updated: 10/08/2025*
