@@ -35,10 +35,10 @@ function App() {
     <HashRouter>
       <div className="flex flex-col min-h-screen">
         {/* header */}
-        <div className='flex flex-row overflow-hidden h-12 '>
+        <div className='flex flex-row overflow-hidden h-8 '>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="text-gray-800 dark:text-white w-12 h-12 flex items-center justify-center bg-blue-500"
+            className="text-gray-800 dark:text-white w-8 h-8 flex items-center justify-center bg-blue-500"
           >
             ☰
           </button>
@@ -66,6 +66,7 @@ function App() {
               <Route path="/knowledge" element={<KnowledgePage />} />
               <Route path="/knowledge/quote" element={<QuotePage />} />
               <Route path="/personal" element={<PersonalPage />} />
+              <Route path="/test" element={<TestPage />} />
               {/* <Route path="/reports/sankey" element={<SankeyPage />} /> */}
             </Routes>
           </main>

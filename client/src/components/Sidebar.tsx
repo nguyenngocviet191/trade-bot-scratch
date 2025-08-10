@@ -16,7 +16,7 @@ export default function SidebarMenu({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="w-40 min-h-screen flex flex-col bg-gray-800 text-white  p-4 space-y-2">
+    <div className="group min-h-screen flex flex-col bg-gray-800 text-white  p-2 space-y-2">
       {menuConfig.map((item, idx) => (
         <div key={idx}>
      
@@ -29,8 +29,8 @@ export default function SidebarMenu({ onClose }: { onClose?: () => void }) {
                 className="flex w-full gap-2  items-center hover:bg-gray-700 rounded"
               >
                 <span>{item.icon && <item.icon size={18} />}</span>
-                <span>{item.label}</span>
-                <div className= "ml-auto">
+                <span className="hidden group-hover:block">{item.label}</span>
+                <div className= "ml-auto hidden group-hover:block">
                   {openMenus[item.label as string] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                 </div>
                 
@@ -52,7 +52,7 @@ export default function SidebarMenu({ onClose }: { onClose?: () => void }) {
           (<Link to={item.path}>
             <div className="flex flex-row items-center gap-2">
               <span>{item.icon && <item.icon size={18} />}</span>
-              <span>{item.label}</span>
+              <span className="hidden group-hover:block">{item.label}</span>
             </div>
           </Link>)
           }

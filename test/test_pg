@@ -1,0 +1,76 @@
+import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import Column, Integer, Float, DateTime
+from datetime import datetime
+
+from dotenv import load_dotenv
+import asyncpg
+import asyncio
+
+import os
+load_dotenv()
+# Thông tin kết nối PostgreSQL
+DB_USER = os.getenv( "POSTGRES_USER")
+DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
+DB_PORT = os.getenv("POSTGRES_PORT", "5432")  
+DB_NAME = os.getenv("POSTGRES_DB")
+
+print(f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+# Tạo kết nối SQLAlchemy
+# engine = create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+engine = create_async_engine(f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}", echo=True)
+async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+table_name = "ohlcv_data_test"
+Base = declarative_base()
+
+class OHLCV(Base):
+    __tablename__ = table_name
+    id = Column(Integer, primary_key=True, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    open = Column(Float)
+    high = Column(Float)
+    low = Column(Float)
+    close = Column(Float)
+    volume = Column(Float)
+
+# Giả lập dữ liệu OHLCV
+data = {
+    "timestamp": pd.date_range("2023-01-01", periods=5, freq="D"),
+    "open": [100, 102, 101, 105, 107],
+    "high": [110, 112, 111, 115, 117],
+    "low": [95, 98, 97, 100, 104],
+    "close": [108, 109, 106, 114, 116],
+    "volume": [1000, 1500, 1200, 1600, 1700],
+}
+
+# df = pd.DataFrame(data)
+
+# # ✅ Lưu vào PostgreSQL
+
+# df.to_sql(table_name, engine, if_exists="replace", index=False)
+# print(f"✅ Đã lưu DataFrame vào bảng '{table_name}'")
+
+# # ✅ Đọc lại từ PostgreSQL
+# df_from_db = pd.read_sql(f"SELECT * FROM {table_name}", engine)
+# print("✅ Dữ liệu đọc lại từ PostgreSQL:")
+# print(df_from_db)
+
+async def async_read_data():
+    async with async_session() as session:
+        result = await session.execute(f"SELECT * FROM {table_name}")
+        print(result.fetchall())
+
+async def async_save_data():
+    async with async_session() as session:
+        new_data = OHLCV(open=100, high=110, low=95, close=105, volume=1500)
+        session.add(new_data)
+        await session.commit()
+        print("✅ Đã lưu dữ liệu mới vào bảng OHLCV")
+        await async_read_data()
+asyncio.run(async_save_data())

@@ -1,24 +1,36 @@
+
+from server.services.ccxt_service import get_ccxt_ohlcv, fetch_bulk_update, get_similar_ohlcv
+import uvicorn
+from server.services.analysis_mt5 import analyze_mt5
+import server.services.ccxt_service as ccxt_service
+from server.services.coinmaketcap_service import fetch_quote_cmc, fetch_listing_cmc
+from datetime import datetime
+from collections import deque
+from typing import Dict
+import json
+import redis.asyncio as redis
+import aiohttp
+from datetime import datetime, timedelta
+
 from zoneinfo import ZoneInfo
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from .services.analysis_mt5 import analyze_mt5
-from datetime import datetime, timedelta
+import sys
+import os
+# Add the project root to the Python path
+path = sys.path.append(os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
 # from fastapi_cache2 import FastAPICache, RedisBackend
 # from fastapi_cache2.decorator import cache
-import redis.asyncio as redis
-import json
-from typing import Dict
-from collections import deque
-from datetime import datetime
 r = redis.Redis(host="localhost", port=6379)
 app = FastAPI()
 
 # Cho phép gọi từ frontend local
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # hoặc ["http://localhost:5173"]
-    # allow_origins=["*"],
+    # allow_origins=["http://localhost:5173"],  # hoặc ["http://localhost:5173"]
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,6 +63,19 @@ MAX_MESSAGES = 20
 # TODO  create function register bot to channel,when hook listener receive message, it will try to trade
 
 
+@app.on_event("startup")
+async def startup_event():
+
+    await init_app()
+
+
+async def init_app():
+    # Ví dụ: mở kết nối DB, nạp cấu hình, load model, v.v.
+    while not ccxt_service.ohlcv_data_1d:
+        await fetch_bulk_update("1d", limit=2000, new_create=False)
+    print("✅ Server ready")
+
+
 @app.get("/")
 def home():
     return {"message": "MT5 Reporting API"}
@@ -65,6 +90,119 @@ def get_mt5_report(account="fx_bot2"):
                          from_date=from_date, to_date=to_date)
     # return result
     return JSONResponse(content=result)
+
+
+@app.get("/api/cmc_listing")
+async def get_cmc_listing():
+    data = await fetch_listing_cmc()
+    # print(data)
+    # return json.loads(data)
+    return data
+
+
+@app.get("/api/cmc_quote")
+async def get_cmc_quote():
+    data = await fetch_quote_cmc()
+    # print(data)
+    # return json.loads(data)
+    return data
+
+
+@app.get("/api/fetch_similar_ohlcv/{token}")
+async def fetch_similar_ohlcv(token):
+    tf = "1d"
+    window = 30
+    k = 10
+    result = await get_similar_ohlcv(token, tf=tf, k=k, window=window)
+
+    return result
+
+
+@app.post("/api/ccxt_ohlcv")
+async def fetch_ccxt_ohlcv(request: Request):
+    data = await request.json()
+    symbol = data.get("symbol")
+    tf = data.get("tf")
+    since = data.get("since")
+    limit = data.get("limit")  # Mặc định lấy 1000 nến nếu không có limit
+    data = await get_ccxt_ohlcv(symbol=symbol, tf=tf, since=since, limit=limit, buffer=0)
+    return json.loads(data.to_json(orient="records"))
+
+EXCHANGE_WS = "wss://stream.binance.com:9443/ws"
+
+
+async def binance_stream(websocket: WebSocket, symbol: str):
+    """Kết nối tới Binance và forward data tới client"""
+    async with aiohttp.ClientSession() as session:
+        async with session.ws_connect(EXCHANGE_WS,heartbeat=30) as ws:
+            # Subscribe miniTicker
+            request = {
+                "method": "SUBSCRIBE",
+                "params": [
+                    f"{symbol}@miniTicker"
+                    # "!miniTicker@arr"
+                ],
+                "id": 1
+            }
+            await ws.send_str(json.dumps(request))
+            print(f"Subscribed to {symbol} miniTicker ")
+
+            async for msg in ws:
+                # print ("received message from Binance:", msg)
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    data = json.loads(msg.data)
+                    print(f"Received data for {symbol}: {data}")
+                    if data.get("E") :
+                        data_return = {
+                            "timestamp": data["E"],
+                            # open price is calculated from last price and change percentage
+                            "open":  float(data["o"]),
+                            "high": float(data["h"]),
+                            "low": float(data["l"]),
+                            "close": float(data["c"]),
+                            "volume": float(data["v"]),
+                        }
+                        await websocket.send_json(data_return)
+                        
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    break
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        # Đọc message đầu tiên từ client (giả sử client gửi JSON {"symbol": "BTCUSDT"})
+        init_msg = await websocket.receive_text()
+        init_data = json.loads(init_msg)
+        symbol = init_data.get("symbol").lower()
+        if not symbol:
+            await websocket.send_text("Error: 'symbol' is required in initial message")
+            await websocket.close()
+            return
+
+        # Gọi hàm stream với symbol lấy được
+        await binance_stream(websocket, symbol)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        await websocket.close()
+
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     while True:
+#         try:
+#             message = await websocket.receive_text()
+#             if message == "get_listing":
+#                 data = await fetch_listing_cmc()
+#                 # data = await fetch_quote_cmc()
+#                 await websocket.send_text(data)
+#         except Exception as e:
+#             await websocket.close()
+#             break
 
 
 @app.post("/bots/register")
@@ -112,12 +250,12 @@ async def webhook_listener(request: Request):
         registered_bots = await r.smembers(f"bots:{channel}")
         for i in registered_bots:
             try:
-                #bot_trade(i, trade_action, entry, tp, sl, reason)
+                # bot_trade(i, trade_action, entry, tp, sl, reason)
                 pass
             except Exception as e:
                 errors.append(f"Bot {i}: {str(e)}")
             # pass
-        #    
+        #
         return {
             "channel": channel,
             "action": action,
@@ -201,3 +339,8 @@ async def get_channel_summary():
         })
 
     return {"channels": result}
+if __name__ == "__main__":
+    uvicorn.run("server.sv_trading:app",
+                host="0.0.0.0", port=8080, reload=True)
+
+    # uvicorn server.sv_trading:app --host 0.0.0.0 --port 8000 --reload

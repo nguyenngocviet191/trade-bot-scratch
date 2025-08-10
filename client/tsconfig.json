@@ -10,7 +10,8 @@
       "@components/*": ["components/*"],
       "@hooks/*": ["hooks/*"],
       "@/*": ["src/*"] // Corrected alias path
-    }
+    },
+    "typeRoots": ["./types", "./node_modules/@types"]
   },
   "include": ["src/**/*"]
 }
