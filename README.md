@@ -41,8 +41,3 @@ trade-bot-scratch/
 └── shared/           # Shared types and data
 ```
 
-//xoa data redis bang cmd
-DEL ohlcv_1d:BTC/USDT
-redis-cli --scan --pattern 'ohlcv_1d:*' | xargs redis-cli del
-// xoa bang by python
-await r.delete("ohlcv_1d:BTC/USDT")
