@@ -63,11 +63,11 @@ graph TB
     TBS -->|Stores backups| S4
     
     %% Styling
-    classDef userClass fill:#e1f5fe
-    classDef systemClass fill:#f3e5f5
-    classDef exchangeClass fill:#e8f5e8
-    classDef dataClass fill:#fff3e0
-    classDef serviceClass fill:#fce4ec
+    classDef userClass fill:#e1f5fe ,color:#000000
+    classDef systemClass fill:#f3e5f5,color:#000000
+    classDef exchangeClass fill:#e8f5e8,color:#000000
+    classDef dataClass fill:#fff3e0,color:#000000
+    classDef serviceClass fill:#fce4ec,color:#000000
     
     class U1,U2,U3 userClass
     class TBS systemClass

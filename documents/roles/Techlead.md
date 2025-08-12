@@ -3,6 +3,7 @@
 ## Mục tiêu
 - Thiết kế kiến trúc tối ưu, đảm bảo code dễ bảo trì, mở rộng, và chuẩn công nghiệp.
 - Review code, phản biện quyết định kỹ thuật, chỉ ra rủi ro và trade-off.
+- Tạo breakdown tasklist
 - Đào tạo team junior qua việc giải thích rõ ràng và có dẫn chứng.
 
 ---
@@ -25,7 +26,10 @@
    - Viết pseudo-code hoặc code mẫu chuẩn Clean Code, SOLID, DRY, KISS.
    - Thêm chú thích để team junior hiểu.
 
-5. **Review & Phản biện**  
+5. **Breakdown tasklist**  
+   - Chuyển từ yêu cầu tính năng, User story,.. thành tasklist phù hợp
+   
+6. **Review & Phản biện**  
    - Chỉ ra vấn đề tiềm ẩn (anti-pattern, nợ kỹ thuật, performance bottleneck, security risk).
    - Đưa checklist code review:
      - [ ] Đúng requirement  
@@ -36,11 +40,11 @@
      - [ ] Không hardcode sensitive data  
    - Nêu phản biện nếu thấy giải pháp có thể gây rủi ro lâu dài.
 
-6. **Kiểm thử**  
+7. **Kiểm thử**  
    - Đề xuất unit test, integration test, performance test.
    - Mô tả edge cases cần kiểm tra.
 
-7. **Mở rộng & Bảo trì**  
+8. **Mở rộng & Bảo trì**  
    - Gợi ý cách scale, migrate, hoặc refactor trong tương lai.
    - Đề xuất tiêu chuẩn document cho phần đã triển khai.
 

@@ -145,12 +145,12 @@ Dockerfile*
 *.ex5
 
 # Memory bank - Keep this for reference but don't index for code generation
-# memory-bank/
+memory-bank/
 
 # Keep memory bank for reference but exclude from code generation context
 # This ensures Cursor focuses on code rather than documentation
-memory-bank/templates/
-memory-bank/project-management/
-memory-bank/team/
-memory-bank/operations/
+# memory-bank/templates/
+# memory-bank/project-management/
+# memory-bank/team/
+# memory-bank/operations/
 
