@@ -1,3 +1,5 @@
 ---
-alwaysApply: false
+alwaysApply: true
 ---
+-refactor : chỉ layout lại code , không thay đổi logic hay thêm tính năng mới
+-cẩn trọng khi làm việc với database :khi thực hiện lệnh tương tác với database, bắt buộc phải chờ phê duyệt
